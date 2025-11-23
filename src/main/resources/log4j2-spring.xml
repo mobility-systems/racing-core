@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="log4j2.contextSelector">org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+        </Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] %c{1} - %msg%n</Property>
+        <Property name="LOG_PATH">logs</Property>
+        <Property name="LOG_FILE_NAME">application.log</Property>
+        <Property name="LOG_FILE_MAX_SIZE">10MB</Property>
+        <Property name="LOG_MAX_HISTORY">30</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- File Appender -->
+        <RollingFile name="File" fileName="${LOG_PATH}/${LOG_FILE_NAME}" filePattern="${LOG_PATH}/{LOG_FILE_NAME}-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy  interval="1" modulate="true" />
+                <SizeBasedTriggeringPolicy size="${LOG_FILE_MAX_SIZE}" />
+            </Policies>
+            <DefaultRolloverStrategy max="30" />
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- Root Logger (set to INFO level for general logging) -->
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+        </Root>
+
+        <!-- Example of specific logger configuration for Spring Boot specific packages -->
+        <Logger name="org.springframework" level="WARN" additivity="false">
+            <AppenderRef ref="RollingFile" />
+        </Logger>
+
+        <!-- Example of specific logger for debugging purposes -->
+        <Logger name="com.yourcompany" level="DEBUG" additivity="false">
+            <AppenderRef ref="RollingFile" />
+        </Logger>
+    </Loggers>
+</Configuration>
