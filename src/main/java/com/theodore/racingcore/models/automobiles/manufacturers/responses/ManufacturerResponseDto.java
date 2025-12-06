@@ -1,7 +1,7 @@
 package com.theodore.racingcore.models.automobiles.manufacturers.responses;
 
 import com.theodore.racingcore.models.automobiles.cars.responses.ManufacturerCarModelResponseDto;
-import com.theodore.racingmodel.enums.Country;
+import com.theodore.infrastructure.common.enums.Country;
 
 import java.util.Set;
 

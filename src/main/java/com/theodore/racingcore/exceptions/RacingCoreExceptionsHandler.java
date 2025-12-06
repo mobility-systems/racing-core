@@ -1,6 +1,6 @@
 package com.theodore.racingcore.exceptions;
 
-import com.theodore.racingmodel.models.MobilityAppErrorResponse;
+import com.theodore.infrastructure.common.models.MobilityAppErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,5 +24,7 @@ public class RacingCoreExceptionsHandler {
 
         return new ResponseEntity<>(error, HttpStatus.PRECONDITION_FAILED);
     }
+
+    //todo: add the rest
 
 }

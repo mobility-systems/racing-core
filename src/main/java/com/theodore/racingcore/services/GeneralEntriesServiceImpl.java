@@ -1,12 +1,10 @@
 package com.theodore.racingcore.services;
 
 import com.theodore.racingcore.entities.generalentries.GeneralCode;
-import com.theodore.racingcore.entities.generalentries.GeneralEntry;
 import com.theodore.racingcore.models.general.CreateGeneralCodeRequestDto;
 import com.theodore.racingcore.models.general.CreateGeneralEntryRequestDto;
 import com.theodore.racingcore.repositories.generalentries.GeneralCodeRepository;
 import com.theodore.racingcore.repositories.generalentries.GeneralEntryRepository;
-import com.theodore.racingmodel.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -12,7 +12,7 @@ import com.theodore.racingcore.repositories.CarModelRepository;
 import com.theodore.racingcore.repositories.CarSpecificationRepository;
 import com.theodore.racingcore.repositories.TechnicalDetailsRepository;
 import com.theodore.racingcore.utils.Utils;
-import com.theodore.racingmodel.exceptions.NotFoundException;
+import com.theodore.infrastructure.common.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

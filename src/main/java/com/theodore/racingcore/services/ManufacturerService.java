@@ -5,7 +5,7 @@ import com.theodore.racingcore.models.automobiles.manufacturers.requests.NewManu
 import com.theodore.racingcore.models.automobiles.manufacturers.requests.SearchManufacturersRequest;
 import com.theodore.racingcore.models.automobiles.manufacturers.responses.BasicManufacturerInfoResponseDto;
 import com.theodore.racingcore.models.automobiles.manufacturers.responses.ManufacturerResponseDto;
-import com.theodore.racingmodel.models.SearchResponse;
+import com.theodore.infrastructure.common.models.SearchResponse;
 
 public interface ManufacturerService {
 

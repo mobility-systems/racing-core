@@ -24,14 +24,14 @@ public class GeneralEntriesController {
     }
 
     @PostMapping("/insert/code")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<Void> insertNewGeneralCode(@RequestBody @Valid CreateGeneralCodeRequestDto request) {
         generalEntriesService.insertNewGeneralCode(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/insert/entry")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<EngineResponseDto> insertNewGeneralEntry(@RequestBody @Valid CreateGeneralEntryRequestDto request) {
         generalEntriesService.insertNewGeneralEntry(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();

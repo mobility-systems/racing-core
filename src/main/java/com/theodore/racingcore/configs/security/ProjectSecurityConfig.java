@@ -42,8 +42,8 @@ public class ProjectSecurityConfig {
                                 "/v3/api-docs.yaml"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/cars/by-id/**").permitAll()
-                        .anyRequest().permitAll()
-                        //.anyRequest().authenticated()
+                        //.anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))

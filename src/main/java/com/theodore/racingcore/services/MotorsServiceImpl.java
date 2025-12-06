@@ -4,7 +4,7 @@ import com.theodore.racingcore.entities.cars.ElectricMotor;
 import com.theodore.racingcore.entities.cars.Engine;
 import com.theodore.racingcore.repositories.ElectricMotorRepository;
 import com.theodore.racingcore.repositories.EngineRepository;
-import com.theodore.racingmodel.exceptions.NotFoundException;
+import com.theodore.infrastructure.common.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

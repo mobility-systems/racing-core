@@ -1,6 +1,6 @@
 package com.theodore.racingcore.models.automobiles.manufacturers.requests;
 
-import com.theodore.racingmodel.enums.Country;
+import com.theodore.infrastructure.common.enums.Country;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

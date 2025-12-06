@@ -1,6 +1,6 @@
 package com.theodore.racingcore.entities.generalentries;
 
-import com.theodore.racingmodel.entities.AuditableUpdateEntity;
+import com.theodore.infrastructure.common.entities.AuditableUpdateEntity;
 import jakarta.persistence.*;
 
 @Entity(name = "GeneralEntry")

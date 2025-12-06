@@ -8,6 +8,7 @@ import com.theodore.racingcore.services.DrivetrainService;
 import com.theodore.racingcore.utils.Utils;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -24,7 +25,7 @@ public class DrivetrainController {
     }
 
     @PostMapping("/create")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<DrivetrainResponseDto> createNewDrivetrain(@RequestBody @Valid CreateNewDrivetrainRequestDto request) {
         var response = drivetrainService.createNewDrivetrain(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/by-id/{id}").buildAndExpand(response.id()).toUri();
@@ -32,7 +33,7 @@ public class DrivetrainController {
     }
 
     @PutMapping("/update/{id}")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<DrivetrainResponseDto> updateDrivetrainEndpoint(@PathVariable Long id,
                                                                           @RequestBody @Valid UpdateDrivetrainRequestDto request,
                                                                           @RequestHeader(value = "If-Match") String ifMatch) {
@@ -48,7 +49,7 @@ public class DrivetrainController {
     }
 
     @PostMapping("/engine/create")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<EngineResponseDto> insertNewEngine(@RequestBody @Valid CreateEngineRequestDto request) {
         var response = drivetrainService.insertNewEngine(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/engine/by-id/{id}").buildAndExpand(response.id()).toUri();
@@ -56,7 +57,7 @@ public class DrivetrainController {
     }
 
     @PutMapping("/engine/update/{id}")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<EngineResponseDto> updateEngine(@PathVariable Long id,
                                                           @RequestBody @Valid UpdateEngineRequestDto request,
                                                           @RequestHeader(value = "If-Match") String ifMatch) {
@@ -72,7 +73,7 @@ public class DrivetrainController {
     }
 
     @PostMapping("/electric-motor/create")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<ElectricMotorResponseDto> insertNewElectricMotor(@RequestBody @Valid CreateElectricMotorRequestDto request) {
         var response = drivetrainService.insertNewElectricMotor(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/by-id/{id}").buildAndExpand(response.id()).toUri();

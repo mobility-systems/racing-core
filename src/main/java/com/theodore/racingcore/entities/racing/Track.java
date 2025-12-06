@@ -1,7 +1,7 @@
 package com.theodore.racingcore.entities.racing;
 
-import com.theodore.racingmodel.entities.AuditableUpdateEntity;
-import com.theodore.racingmodel.enums.Country;
+import com.theodore.infrastructure.common.entities.AuditableUpdateEntity;
+import com.theodore.infrastructure.common.enums.Country;
 import jakarta.persistence.*;
 
 @Entity

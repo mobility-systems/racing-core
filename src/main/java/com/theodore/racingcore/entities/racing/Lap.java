@@ -1,7 +1,7 @@
 package com.theodore.racingcore.entities.racing;
 
 import com.theodore.racingcore.entities.cars.CarSpecification;
-import com.theodore.racingmodel.entities.AuditableUpdateEntity;
+import com.theodore.infrastructure.common.entities.AuditableUpdateEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

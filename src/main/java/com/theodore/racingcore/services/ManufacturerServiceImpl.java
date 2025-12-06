@@ -10,8 +10,8 @@ import com.theodore.racingcore.models.automobiles.manufacturers.responses.Manufa
 import com.theodore.racingcore.repositories.ManufacturerRepository;
 import com.theodore.racingcore.repositories.specifications.ManufacturerSpecification;
 import com.theodore.racingcore.utils.Utils;
-import com.theodore.racingmodel.exceptions.NotFoundException;
-import com.theodore.racingmodel.models.SearchResponse;
+import com.theodore.infrastructure.common.exceptions.NotFoundException;
+import com.theodore.infrastructure.common.models.SearchResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

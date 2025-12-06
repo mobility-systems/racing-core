@@ -6,10 +6,11 @@ import com.theodore.racingcore.models.automobiles.manufacturers.responses.BasicM
 import com.theodore.racingcore.models.automobiles.manufacturers.responses.ManufacturerResponseDto;
 import com.theodore.racingcore.services.ManufacturerService;
 import com.theodore.racingcore.utils.Utils;
-import com.theodore.racingmodel.models.SearchResponse;
+import com.theodore.infrastructure.common.models.SearchResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -26,7 +27,7 @@ public class ManufacturersController {
     }
 
     @PostMapping("/create")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<ManufacturerResponseDto> insertNewManufacturer(@RequestBody @Valid NewManufacturerRequestDto request) {
         var response = manufacturerService.createNewManufacturer(request);
 
@@ -36,7 +37,7 @@ public class ManufacturersController {
     }
 
     @PutMapping("/update/{id}")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<ManufacturerResponseDto> updateManufacturer(@PathVariable Long id,
                                                                       @RequestBody @Valid NewManufacturerRequestDto request,
                                                                       @RequestHeader(value = "If-Match") String ifMatch) {

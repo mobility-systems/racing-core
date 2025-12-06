@@ -13,9 +13,7 @@ public class RestClientConfig {
 
     /**
      * SWAGGER
-     * OpenAPI documentation for the application.
-     * Defines the API title, version, and a global Bearer (JWT) authentication scheme,
-     * enabling the "Authorize" button in Swagger UI for authenticated requests.
+     * Security button functionality
      */
     @Bean
     public OpenAPI customOpenAPI() {

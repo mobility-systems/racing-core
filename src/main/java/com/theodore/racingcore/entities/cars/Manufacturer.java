@@ -1,6 +1,6 @@
 package com.theodore.racingcore.entities.cars;
 
-import com.theodore.racingmodel.enums.Country;
+import com.theodore.infrastructure.common.enums.Country;
 import jakarta.persistence.*;
 
 import java.util.HashSet;

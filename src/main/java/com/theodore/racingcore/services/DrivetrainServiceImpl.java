@@ -14,7 +14,7 @@ import com.theodore.racingcore.models.automobiles.drivetrain.responses.EngineRes
 import com.theodore.racingcore.repositories.DrivetrainRepository;
 import com.theodore.racingcore.repositories.generalentries.TransmissionTypeRepository;
 import com.theodore.racingcore.utils.Utils;
-import com.theodore.racingmodel.exceptions.NotFoundException;
+import com.theodore.infrastructure.common.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;

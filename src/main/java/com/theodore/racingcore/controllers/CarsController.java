@@ -9,6 +9,7 @@ import com.theodore.racingcore.services.CarService;
 import com.theodore.racingcore.utils.Utils;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -25,7 +26,7 @@ public class CarsController {
     }
 
     @PostMapping("/model/create")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<CarModelResponseDto> insertNewCarModel(@RequestBody @Valid CarModelRequestDto request) {
         var response = carService.createNewCarModel(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/model/by-id/{id}").buildAndExpand(response.id()).toUri();
@@ -33,7 +34,7 @@ public class CarsController {
     }
 
     @PutMapping("/model/update/{id}")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<CarModelResponseDto> updateCarModel(@PathVariable Long id,
                                                @RequestBody @Valid CarModelRequestDto request,
                                                @RequestHeader(value = "If-Match") String ifMatch) {
@@ -49,7 +50,7 @@ public class CarsController {
     }
 
     @PostMapping("/create")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<CarResponseDto> insertNewCar(@RequestBody @Valid CreateNewCarRequest request) {
         var response = carService.insertNewCarInfo(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/by-id/{id}").buildAndExpand(response.id()).toUri();
@@ -57,7 +58,7 @@ public class CarsController {
     }
 
     @PutMapping("/update/{id}")
-    //@PreAuthorize("hasRole('SYS_ADMIN')")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<CarResponseDto> updateCar(@PathVariable Long id,
                                           @RequestBody @Valid UpdateCarRequest request,
                                           @RequestHeader(value = "If-Match") String ifMatch) {
