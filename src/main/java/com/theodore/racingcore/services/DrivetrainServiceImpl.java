@@ -49,7 +49,7 @@ public class DrivetrainServiceImpl implements DrivetrainService {
         var drivetrain = new Drivetrain();
 
         if (request.engine() == null && request.electricMotor() == null) {
-            throw new RuntimeException("something went wrong");
+            throw new RuntimeException("something went wrong");//todo: better exception
         }
         if (request.engine() != null) {
             var engine = motorsService.getEngineById(request.engine());
@@ -79,7 +79,7 @@ public class DrivetrainServiceImpl implements DrivetrainService {
         }
 
         if (request.engine() == null && request.electricMotor() == null) {
-            throw new RuntimeException("something went wrong");
+            throw new RuntimeException("something went wrong");//todo: better exception
         }
 
         if (checkIfDrivetrainAllFieldsUnchanged(request, drivetrain)) {

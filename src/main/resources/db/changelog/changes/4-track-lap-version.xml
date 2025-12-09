@@ -5,9 +5,16 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="/db/changelog/changes/1-general-entries-initialization.xml"/>
-    <include file="/db/changelog/changes/2-car-info-initialization.xml"/>
-    <include file="/db/changelog/changes/3-track-initialization.xml"/>
-    <include file="/db/changelog/changes/4-track-lap-version.xml"/>
+    <changeSet id="4" author="theodoreromeos">
+        <sql>
+
+            ALTER TABLE track
+                ADD version BIGINT;
+
+            ALTER TABLE lap
+                ADD version BIGINT;
+
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

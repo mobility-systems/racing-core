@@ -8,15 +8,35 @@ import com.theodore.racingcore.models.automobiles.cars.responses.CarResponseDto;
 
 public interface CarService {
 
+    /**
+     * Creates a car model which contains basic info: manufacturer, model name , year etc.
+     */
     CarModelResponseDto createNewCarModel(CarModelRequestDto request);
 
+    /**
+     * Updates a car model which contains basic info: manufacturer, model name , year etc.
+     *
+     * @param id      The id of the car model that will be updated
+     * @param request The updated info of the car model
+     * @param ifMatch This is used to prevent different simultaneous requests updating the same entry
+     */
     CarModelResponseDto updateCarModel(Long id, CarModelRequestDto request, String ifMatch);
 
     CarModelResponseDto findCarModelById(Long id);
 
+    /**
+     * Creates a new complete car which contains all its info: car model, drivetrain , power figures etc.
+     */
     CarResponseDto insertNewCarInfo(CreateNewCarRequest request);
 
-    CarResponseDto updateCar(Long id, UpdateCarRequest updateRequest, String ifMatch);
+    /**
+     * Updates a car
+     *
+     * @param id      The id of the car that will be updated
+     * @param request The updated info of the car
+     * @param ifMatch This is used to prevent different simultaneous requests updating the same entry
+     */
+    CarResponseDto updateCar(Long id, UpdateCarRequest request, String ifMatch);
 
     CarResponseDto getCarById(Long id);
 }

@@ -1,5 +1,8 @@
 package com.theodore.racingcore.exceptions;
 
+import com.theodore.infrastructure.common.exceptions.AlreadyExistsException;
+import com.theodore.infrastructure.common.exceptions.NotFoundException;
+import com.theodore.infrastructure.common.exceptions.UserAlreadyExistsException;
 import com.theodore.infrastructure.common.models.MobilityAppErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,25 @@ public class RacingCoreExceptionsHandler {
         return new ResponseEntity<>(error, HttpStatus.PRECONDITION_FAILED);
     }
 
-    //todo: add the rest
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<MobilityAppErrorResponse> handleNotFoundErrors(NotFoundException ex) {
+        LOGGER.warn("Resource not found: {}", ex.getMessage(), ex);
+        MobilityAppErrorResponse error = new MobilityAppErrorResponse(ex.getMessage(), Instant.now());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<MobilityAppErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        LOGGER.error("{}", ex.getMessage(), ex);
+        MobilityAppErrorResponse error = new MobilityAppErrorResponse(ex.getMessage(), Instant.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<MobilityAppErrorResponse> handleResourceAlreadyExists(AlreadyExistsException ex) {
+        LOGGER.warn("{}", ex.getResource(), ex);
+        MobilityAppErrorResponse error = new MobilityAppErrorResponse(ex.getMessage(), Instant.now());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
 
 }
