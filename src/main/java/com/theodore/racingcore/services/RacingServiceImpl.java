@@ -9,8 +9,10 @@ import com.theodore.racingcore.entities.racing.Track;
 import com.theodore.racingcore.exceptions.InvalidETagException;
 import com.theodore.racingcore.mappers.DriverMapper;
 import com.theodore.racingcore.mappers.TrackMapper;
+import com.theodore.racingcore.models.racing.requests.CreateNewLapRequestDto;
 import com.theodore.racingcore.models.racing.requests.CreateNewTrackRequestDto;
 import com.theodore.racingcore.models.racing.respones.DriverResponseDto;
+import com.theodore.racingcore.models.racing.respones.LapPreviewResponseDto;
 import com.theodore.racingcore.models.racing.respones.TrackResponseDto;
 import com.theodore.racingcore.repositories.DriverRepository;
 import com.theodore.racingcore.repositories.TrackRepository;
@@ -109,6 +111,11 @@ public class RacingServiceImpl implements RacingService {
     public DriverResponseDto getDriver(String id) {
         var driver = driverRepository.findById(id).orElseThrow(() -> new NotFoundException("Driver not found"));
         return driverMapper.toResponse(driver);
+    }
+
+    @Override
+    public LapPreviewResponseDto createNewLap(CreateNewLapRequestDto request) {
+        return null;//todo
     }
 
     private Track getTrackById(Long id) {

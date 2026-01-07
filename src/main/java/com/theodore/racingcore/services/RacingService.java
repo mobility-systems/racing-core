@@ -1,7 +1,9 @@
 package com.theodore.racingcore.services;
 
+import com.theodore.racingcore.models.racing.requests.CreateNewLapRequestDto;
 import com.theodore.racingcore.models.racing.requests.CreateNewTrackRequestDto;
 import com.theodore.racingcore.models.racing.respones.DriverResponseDto;
+import com.theodore.racingcore.models.racing.respones.LapPreviewResponseDto;
 import com.theodore.racingcore.models.racing.respones.TrackResponseDto;
 
 public interface RacingService {
@@ -15,5 +17,7 @@ public interface RacingService {
     String createNewDriver(String alias);
 
     DriverResponseDto getDriver(String id);
+
+    LapPreviewResponseDto createNewLap(CreateNewLapRequestDto request);
 
 }

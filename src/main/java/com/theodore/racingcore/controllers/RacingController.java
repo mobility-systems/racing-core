@@ -3,8 +3,10 @@ package com.theodore.racingcore.controllers;
 import com.theodore.racingcore.models.automobiles.manufacturers.requests.NewManufacturerRequestDto;
 import com.theodore.racingcore.models.automobiles.manufacturers.responses.ManufacturerResponseDto;
 import com.theodore.racingcore.models.racing.requests.CreateNewDriverRequestDto;
+import com.theodore.racingcore.models.racing.requests.CreateNewLapRequestDto;
 import com.theodore.racingcore.models.racing.requests.CreateNewTrackRequestDto;
 import com.theodore.racingcore.models.racing.respones.DriverResponseDto;
+import com.theodore.racingcore.models.racing.respones.LapPreviewResponseDto;
 import com.theodore.racingcore.models.racing.respones.TrackResponseDto;
 import com.theodore.racingcore.services.RacingService;
 import com.theodore.racingcore.utils.Utils;
@@ -68,6 +70,12 @@ public class RacingController {
     }
 
 
-
+    @PostMapping("/lap/create")
+    //@PreAuthorize("hasRole('DRIVER')")
+    public ResponseEntity<LapPreviewResponseDto> createNewLap(@RequestBody @Valid CreateNewLapRequestDto request) {
+        LapPreviewResponseDto response = racingService.createNewLap(request);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/lap/by-id/{id}").buildAndExpand(response.id()).toUri();
+        return ResponseEntity.created(location).body(response);
+    }
 
 }
