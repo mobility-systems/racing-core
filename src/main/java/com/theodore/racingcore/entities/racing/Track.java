@@ -29,6 +29,9 @@ public class Track extends AuditableUpdateEntity {
     @Column(name = "racing_approved", nullable = false)
     private Boolean racingApproved = false;
 
+    @Version
+    private long version;
+
     public Long getId() {
         return id;
     }
@@ -77,4 +80,11 @@ public class Track extends AuditableUpdateEntity {
         this.racingApproved = racingApproved;
     }
 
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
 }

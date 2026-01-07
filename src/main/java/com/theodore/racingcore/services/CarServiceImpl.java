@@ -139,10 +139,12 @@ public class CarServiceImpl implements CarService {
 
     }
 
+    //todo
     private CarResponseDto createNewHybridCarInfo(CreateNewHybridCarRequestDto request) {
         return null;
     }
 
+    //todo
     private CarResponseDto createNewElectricCarInfo(CreateNewElectricCarRequestDto request) {
         return null;
     }
@@ -182,10 +184,12 @@ public class CarServiceImpl implements CarService {
                 updatedCarSpecs.getVersion());
     }
 
+    //todo
     private CarResponseDto updateHybridCarInfo(CarSpecification carSpecification, UpdateHybridCarRequestDto updateRequest) {
         return null;
     }
 
+    //todo
     private CarResponseDto updateElectricCarInfo(CarSpecification carSpecification, UpdateElectricCarRequestDto updateRequest) {
         return null;
     }

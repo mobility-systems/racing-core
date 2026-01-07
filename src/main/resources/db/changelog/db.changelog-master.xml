@@ -8,5 +8,7 @@
     <include file="/db/changelog/changes/1-general-entries-initialization.xml"/>
     <include file="/db/changelog/changes/2-car-info-initialization.xml"/>
     <include file="/db/changelog/changes/3-track-initialization.xml"/>
+    <include file="/db/changelog/changes/4-track-lap-version.xml"/>
+    <include file="/db/changelog/changes/5-driver-alias.xml"/>
 
 </databaseChangeLog>

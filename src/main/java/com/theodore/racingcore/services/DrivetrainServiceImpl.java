@@ -1,6 +1,8 @@
 package com.theodore.racingcore.services;
 
+import com.theodore.infrastructure.common.exceptions.NotFoundException;
 import com.theodore.racingcore.entities.cars.Drivetrain;
+import com.theodore.racingcore.entities.cars.ElectricMotor;
 import com.theodore.racingcore.entities.cars.Engine;
 import com.theodore.racingcore.entities.generalentries.TransmissionType;
 import com.theodore.racingcore.exceptions.InvalidETagException;
@@ -12,9 +14,10 @@ import com.theodore.racingcore.models.automobiles.drivetrain.responses.Drivetrai
 import com.theodore.racingcore.models.automobiles.drivetrain.responses.ElectricMotorResponseDto;
 import com.theodore.racingcore.models.automobiles.drivetrain.responses.EngineResponseDto;
 import com.theodore.racingcore.repositories.DrivetrainRepository;
+import com.theodore.racingcore.repositories.ElectricMotorRepository;
+import com.theodore.racingcore.repositories.EngineRepository;
 import com.theodore.racingcore.repositories.generalentries.TransmissionTypeRepository;
 import com.theodore.racingcore.utils.Utils;
-import com.theodore.infrastructure.common.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -22,7 +25,8 @@ import java.util.Objects;
 @Service
 public class DrivetrainServiceImpl implements DrivetrainService {
 
-    private final MotorsService motorsService;
+    private final EngineRepository engineRepository;
+    private final ElectricMotorRepository electricMotorRepository;
     private final ManufacturerService manufacturerService;
     private final EngineMapper engineMapper;
     private final ElectricMotorMapper electricMotorMapper;
@@ -30,11 +34,12 @@ public class DrivetrainServiceImpl implements DrivetrainService {
     private final DrivetrainRepository drivetrainRepository;
     private final TransmissionTypeRepository transmissionTypeRepository;
 
-    public DrivetrainServiceImpl(MotorsService motorsService, ManufacturerService manufacturerService,
-                                 EngineMapper engineMapper, ElectricMotorMapper electricMotorMapper,
-                                 DrivetrainMapper drivetrainMapper, DrivetrainRepository drivetrainRepository,
-                                 TransmissionTypeRepository transmissionTypeRepository) {
-        this.motorsService = motorsService;
+    public DrivetrainServiceImpl(EngineRepository engineRepository, ElectricMotorRepository electricMotorRepository,
+                                 ManufacturerService manufacturerService, EngineMapper engineMapper,
+                                 ElectricMotorMapper electricMotorMapper, DrivetrainMapper drivetrainMapper,
+                                 DrivetrainRepository drivetrainRepository, TransmissionTypeRepository transmissionTypeRepository) {
+        this.engineRepository = engineRepository;
+        this.electricMotorRepository = electricMotorRepository;
         this.manufacturerService = manufacturerService;
         this.engineMapper = engineMapper;
         this.electricMotorMapper = electricMotorMapper;
@@ -49,15 +54,15 @@ public class DrivetrainServiceImpl implements DrivetrainService {
         var drivetrain = new Drivetrain();
 
         if (request.engine() == null && request.electricMotor() == null) {
-            throw new RuntimeException("something went wrong");
+            throw new RuntimeException("something went wrong");//todo: better exception
         }
         if (request.engine() != null) {
-            var engine = motorsService.getEngineById(request.engine());
+            var engine = getEngineById(request.engine());
             drivetrain.setEngine(engine);
         }
 
         if (request.electricMotor() != null) {
-            var electricMotor = motorsService.getElectricMotorById(request.electricMotor());
+            var electricMotor = getElectricMotorById(request.electricMotor());
             drivetrain.setElectricMotor(electricMotor);
         }
 
@@ -79,7 +84,7 @@ public class DrivetrainServiceImpl implements DrivetrainService {
         }
 
         if (request.engine() == null && request.electricMotor() == null) {
-            throw new RuntimeException("something went wrong");
+            throw new RuntimeException("something went wrong");//todo: better exception
         }
 
         if (checkIfDrivetrainAllFieldsUnchanged(request, drivetrain)) {
@@ -87,14 +92,14 @@ public class DrivetrainServiceImpl implements DrivetrainService {
         }
 
         if (request.engine() != null) {
-            var engine = motorsService.getEngineById(request.engine());
+            var engine = getEngineById(request.engine());
             drivetrain.setEngine(engine);
         } else {
             drivetrain.setEngine(null);
         }
 
         if (request.electricMotor() != null) {
-            var electricMotor = motorsService.getElectricMotorById(request.electricMotor());
+            var electricMotor = getElectricMotorById(request.electricMotor());
             drivetrain.setElectricMotor(electricMotor);
         } else {
             drivetrain.setElectricMotor(null);
@@ -113,14 +118,14 @@ public class DrivetrainServiceImpl implements DrivetrainService {
     public EngineResponseDto insertNewEngine(CreateEngineRequestDto request) {
         var manufacturer = manufacturerService.getManufacturerByManufacturerId(request.manufacturerId());
         var newEngine = engineMapper.toEntity(request, manufacturer);
-        var savedEngine = motorsService.saveEngine(newEngine);
+        var savedEngine = engineRepository.save(newEngine);
         return engineMapper.toResponse(savedEngine);
     }
 
     @Override
     public EngineResponseDto updateEngine(Long id, UpdateEngineRequestDto request, String ifMatch) {
 
-        var engine = motorsService.getEngineById(id);
+        var engine = getEngineById(id);
 
         if (engine.getVersion() != Utils.parseIfMatch(ifMatch)) {
             throw new InvalidETagException();
@@ -128,7 +133,7 @@ public class DrivetrainServiceImpl implements DrivetrainService {
 
         if (!checkIfEngineAllFieldsUnchanged(request, engine)) {
             engineMapper.updateEntity(engine, request);
-            motorsService.saveEngine(engine);
+            engineRepository.save(engine);
         }
 
         return engineMapper.toResponse(engine);
@@ -159,7 +164,7 @@ public class DrivetrainServiceImpl implements DrivetrainService {
         var manufacturer = manufacturerService.getManufacturerByManufacturerId(request.manufacturerId());
         var newElectricMotor = electricMotorMapper.toEntity(request, manufacturer);
 
-        var savedEngine = motorsService.saveElectricMotor(newElectricMotor);
+        var savedEngine = electricMotorRepository.save(newElectricMotor);
         return electricMotorMapper.toResponse(savedEngine);
     }
 
@@ -171,7 +176,7 @@ public class DrivetrainServiceImpl implements DrivetrainService {
 
     @Override
     public EngineResponseDto getEngineResponseById(Long id) {
-        var engine = motorsService.getEngineById(id);
+        var engine = getEngineById(id);
         return engineMapper.toResponse(engine);
     }
 
@@ -194,6 +199,14 @@ public class DrivetrainServiceImpl implements DrivetrainService {
     @Override
     public DrivetrainResponseDto getDrivetrainResponseById(Long id) {
         return drivetrainMapper.toResponse(getDrivetrainEntityById(id));
+    }
+
+    private Engine getEngineById(Long id) {
+        return engineRepository.findById(id).orElseThrow(() -> new NotFoundException("Engine not found"));
+    }
+
+    private ElectricMotor getElectricMotorById(Long id) {
+        return electricMotorRepository.findById(id).orElseThrow(() -> new NotFoundException("ElectricMotor not found"));
     }
 
 }

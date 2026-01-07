@@ -32,6 +32,7 @@ public class ProjectSecurityConfig {
                                                 || request.getServletPath().startsWith("/drivetrain/")
                                                 || request.getServletPath().startsWith("/manufacturers/")
                                                 || request.getServletPath().startsWith("/general-entries/")
+                                                || request.getServletPath().startsWith("/racing/")
                                 )
                         )
                 )
@@ -42,8 +43,8 @@ public class ProjectSecurityConfig {
                                 "/v3/api-docs.yaml"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/cars/by-id/**").permitAll()
-                        //.anyRequest().permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
+                        //.anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))

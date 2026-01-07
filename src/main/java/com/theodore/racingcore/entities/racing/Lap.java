@@ -1,15 +1,16 @@
 package com.theodore.racingcore.entities.racing;
 
-import com.theodore.racingcore.entities.cars.CarSpecification;
 import com.theodore.infrastructure.common.entities.AuditableUpdateEntity;
+import com.theodore.racingcore.entities.cars.CarSpecification;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "lap")
 public class Lap extends AuditableUpdateEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -28,7 +29,7 @@ public class Lap extends AuditableUpdateEntity {
     private CarSpecification car;
 
     @Column(name = "lap_date", nullable = false)
-    private Instant lapDate;
+    private LocalDateTime lapDate;
 
     @Column(name = "lap_time", nullable = false, precision = 9, scale = 6)
     private BigDecimal lapTime;
@@ -47,6 +48,9 @@ public class Lap extends AuditableUpdateEntity {
 
     @Column(name = "highest_recorded_speed")
     private Integer highestRecordedSpeed = 0;
+
+    @Version
+    private long version;
 
     public Long getId() {
         return id;
@@ -80,11 +84,11 @@ public class Lap extends AuditableUpdateEntity {
         this.car = car;
     }
 
-    public Instant getLapDate() {
+    public LocalDateTime getLapDate() {
         return lapDate;
     }
 
-    public void setLapDate(Instant lapDate) {
+    public void setLapDate(LocalDateTime lapDate) {
         this.lapDate = lapDate;
     }
 
@@ -136,4 +140,11 @@ public class Lap extends AuditableUpdateEntity {
         this.highestRecordedSpeed = highestRecordedSpeed;
     }
 
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
 }

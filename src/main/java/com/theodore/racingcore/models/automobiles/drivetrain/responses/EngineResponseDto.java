@@ -1,5 +1,6 @@
 package com.theodore.racingcore.models.automobiles.drivetrain.responses;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.theodore.racingcore.entities.enums.EngineType;
 import com.theodore.racingcore.entities.enums.FuelType;
 import com.theodore.racingcore.models.automobiles.manufacturers.responses.BasicManufacturerInfoResponseDto;
@@ -12,5 +13,5 @@ public record EngineResponseDto(Long id,
                                 Integer displacement,
                                 EngineType engineType,
                                 FuelType fuelType,
-                                long version) {
+                                @JsonIgnore long version) {
 }

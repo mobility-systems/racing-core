@@ -19,6 +19,9 @@ public class Driver {
     @OneToMany(mappedBy = "driver")
     private Set<Lap> laps = new HashSet<>();
 
+    @Column(name = "alias")
+    private String alias;
+
     public String getId() {
         return id;
     }
@@ -39,4 +42,11 @@ public class Driver {
         return laps;
     }
 
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 }
