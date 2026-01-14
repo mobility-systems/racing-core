@@ -36,8 +36,8 @@ public class CarsController {
     @PutMapping("/model/update/{id}")
     @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<CarModelResponseDto> updateCarModel(@PathVariable Long id,
-                                               @RequestBody @Valid CarModelRequestDto request,
-                                               @RequestHeader(value = "If-Match") String ifMatch) {
+                                                              @RequestBody @Valid CarModelRequestDto request,
+                                                              @RequestHeader(value = "If-Match") String ifMatch) {
         var response = carService.updateCarModel(id, request, ifMatch);
         return ResponseEntity.ok()
                 .eTag(Utils.toEtag(response.version()))
@@ -60,8 +60,8 @@ public class CarsController {
     @PutMapping("/update/{id}")
     @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<CarResponseDto> updateCar(@PathVariable Long id,
-                                          @RequestBody @Valid UpdateCarRequest request,
-                                          @RequestHeader(value = "If-Match") String ifMatch) {
+                                                    @RequestBody @Valid UpdateCarRequest request,
+                                                    @RequestHeader(value = "If-Match") String ifMatch) {
         var response = carService.updateCar(id, request, ifMatch);
         return ResponseEntity.ok()
                 .eTag(Utils.toEtag(response.version()))

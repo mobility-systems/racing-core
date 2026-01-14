@@ -21,6 +21,7 @@ public interface ElectricMotorMapper {
     @Mapping(target = "batteryCapacity", source = "electricMotorDto.batteryCapacity")
     ElectricMotor toEntity(CreateElectricMotorRequestDto electricMotorDto, Manufacturer manufacturer);
 
+    @Mapping(target = "batteryType", source = "electricMotor.batteryType.description")
     ElectricMotorResponseDto toResponse(ElectricMotor electricMotor);
 
 }

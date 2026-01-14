@@ -11,8 +11,10 @@ import com.theodore.racingcore.models.automobiles.cars.responses.CarResponseDto;
 import com.theodore.racingcore.repositories.CarModelRepository;
 import com.theodore.racingcore.repositories.CarSpecificationRepository;
 import com.theodore.racingcore.repositories.TechnicalDetailsRepository;
+import com.theodore.racingcore.utils.CacheNames;
 import com.theodore.racingcore.utils.Utils;
 import com.theodore.infrastructure.common.exceptions.NotFoundException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -65,6 +67,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheNames.CAR_MODEL_BY_ID, key = "#id", unless = "#result == null")
     public CarModelResponseDto findCarModelById(Long id) {
         var carModel = getCarModelById(id);
         return carModelMapper.toResponse(carModel);
@@ -96,6 +99,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id", unless = "#result == null")
     public CarResponseDto getCarById(Long id) {
         var carSpecification = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
         var carModelResponse = carModelMapper.toResponse(carSpecification.getCar());
