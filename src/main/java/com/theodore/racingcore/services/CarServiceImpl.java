@@ -1,5 +1,6 @@
 package com.theodore.racingcore.services;
 
+import com.theodore.infrastructure.common.exceptions.ReferenceMismatchException;
 import com.theodore.racingcore.entities.cars.CarModel;
 import com.theodore.racingcore.entities.cars.CarSpecification;
 import com.theodore.racingcore.exceptions.InvalidETagException;
@@ -14,6 +15,8 @@ import com.theodore.racingcore.repositories.TechnicalDetailsRepository;
 import com.theodore.racingcore.utils.CacheNames;
 import com.theodore.racingcore.utils.Utils;
 import com.theodore.infrastructure.common.exceptions.NotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +53,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @CachePut(cacheNames = CacheNames.CAR_MODEL_BY_ID, key = "#id")
     public CarModelResponseDto updateCarModel(Long id, CarModelRequestDto request, String ifMatch) {
         var carModel = getCarModelById(id);
 
@@ -64,6 +68,22 @@ public class CarServiceImpl implements CarService {
         var updatedCarModel = carModelRepository.save(carModel);
 
         return carModelMapper.toResponse(updatedCarModel);
+    }
+
+    @Override
+    @CacheEvict(cacheNames = CacheNames.CAR_MODEL_BY_ID, key = "#id")
+    public void deleteCarModel(Long id, String ifMatch) {
+        if(carSpecificationRepository.existsByCar_Id(id)){
+            throw new ReferenceMismatchException("Cannot delete car model because it is used");
+        }
+
+        var carModel = getCarModelById(id);
+
+        if (carModel.getVersion() != Utils.parseIfMatch(ifMatch)) {
+            throw new InvalidETagException();
+        }
+
+        carModelRepository.delete(carModel);
     }
 
     @Override
@@ -83,6 +103,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @CachePut(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id")
     public CarResponseDto updateCar(Long id, UpdateCarRequest updateRequest, String ifMatch) {
 
         var carSpecification = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
@@ -96,6 +117,18 @@ public class CarServiceImpl implements CarService {
             case UpdateHybridCarRequestDto hybrid -> updateHybridCarInfo(carSpecification, hybrid);
             case UpdateElectricCarRequestDto bev -> updateElectricCarInfo(carSpecification, bev);
         };
+    }
+
+    @Override
+    @CacheEvict(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id")
+    public void deleteCar(Long id, String ifMatch) {
+        var car = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
+
+        if (car.getVersion() != Utils.parseIfMatch(ifMatch)) {
+            throw new InvalidETagException();
+        }
+
+        carSpecificationRepository.delete(car);
     }
 
     @Override

@@ -44,6 +44,14 @@ public class CarsController {
                 .body(response);
     }
 
+    @DeleteMapping("/model/{id}")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
+    public ResponseEntity<Void> deleteCarModel(@PathVariable Long id,
+                                               @RequestHeader(value = "If-Match", required = false) String ifMatch) {
+        carService.deleteCarModel(id, ifMatch);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/model/by-id/{id}")
     public ResponseEntity<CarModelResponseDto> fetchCarModelById(@PathVariable Long id) {
         return ResponseEntity.ok().body(carService.findCarModelById(id));
@@ -66,6 +74,14 @@ public class CarsController {
         return ResponseEntity.ok()
                 .eTag(Utils.toEtag(response.version()))
                 .body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
+    public ResponseEntity<Void> deleteCar(@PathVariable Long id,
+                                          @RequestHeader(value = "If-Match", required = false) String ifMatch) {
+        carService.deleteCar(id, ifMatch);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/by-id/{id}")
