@@ -28,8 +28,6 @@ import java.util.Map;
 @EnableConfigurationProperties(CacheProperties.class)
 public class CacheConfig implements CachingConfigurer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheConfig.class);
-
     @Value("${app.cache.key-prefix}")
     private String keyPrefix;
 
