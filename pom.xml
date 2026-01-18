@@ -38,6 +38,8 @@
         <grpc.java.version>1.78.0</grpc.java.version>
         <!--    SWAGGER VERSION    -->
         <springdoc.version>2.8.15</springdoc.version>
+        <!--   Theodore versions     -->
+        <mobility-common.version>0.0.2</mobility-common.version>
     </properties>
 
     <dependencyManagement>
@@ -124,12 +126,12 @@
         <dependency>
             <groupId>com.theodore.common</groupId>
             <artifactId>infrastructure-common</artifactId>
-            <version>0.0.1</version>
+            <version>${mobility-common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.theodore.common</groupId>
             <artifactId>proto-common</artifactId>
-            <version>0.0.1</version>
+            <version>${mobility-common.version}</version>
         </dependency>
 
         <!--  SWAGGER   -->
