@@ -216,4 +216,18 @@
         </profile>
     </profiles>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages - mobilitycommon</name>
+            <url>https://maven.pkg.github.com/theodoreromeos/mobility-common</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
 </project>
