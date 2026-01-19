@@ -38,6 +38,8 @@
         <grpc.java.version>1.78.0</grpc.java.version>
         <!--    SWAGGER VERSION    -->
         <springdoc.version>2.8.15</springdoc.version>
+        <!--   Theodore versions     -->
+        <mobility-common.version>0.0.3</mobility-common.version>
     </properties>
 
     <dependencyManagement>
@@ -124,12 +126,12 @@
         <dependency>
             <groupId>com.theodore.common</groupId>
             <artifactId>infrastructure-common</artifactId>
-            <version>0.0.1</version>
+            <version>${mobility-common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.theodore.common</groupId>
             <artifactId>proto-common</artifactId>
-            <version>0.0.1</version>
+            <version>${mobility-common.version}</version>
         </dependency>
 
         <!--  SWAGGER   -->
@@ -187,6 +189,18 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
+            <!-- UNIT TESTS -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -198,13 +212,10 @@
             </properties>
         </profile>
         <profile>
-            <id>testing</id>
+            <id>staging</id>
             <properties>
-                <spring.profiles.active>testing</spring.profiles.active>
+                <spring.profiles.active>staging</spring.profiles.active>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
         <profile>
             <id>prod</id>
@@ -212,6 +223,46 @@
                 <spring.profiles.active>prod</spring.profiles.active>
             </properties>
         </profile>
+        <profile>
+            <id>integration</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>3.2.5</version>
+                        <executions>
+                            <execution>
+                                <id>integration-tests</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/*IT.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages - mobilitycommon</name>
+            <url>https://maven.pkg.github.com/theodoreromeos/mobility-common</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>
