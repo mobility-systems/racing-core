@@ -22,6 +22,15 @@ public class Driver {
     @Column(name = "alias")
     private String alias;
 
+    public Driver() {
+    }
+
+    public Driver(String id, Integer trophies, String alias) {
+        this.id = id;
+        this.trophies = trophies;
+        this.alias = alias;
+    }
+
     public String getId() {
         return id;
     }
