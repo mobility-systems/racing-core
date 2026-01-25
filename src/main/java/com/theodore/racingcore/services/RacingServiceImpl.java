@@ -19,11 +19,13 @@ import com.theodore.racingcore.repositories.TrackRepository;
 import com.theodore.racingcore.services.clients.AccountManagementRestClient;
 import com.theodore.racingcore.services.clients.AuthServerGrpcClient;
 import com.theodore.racingcore.utils.Utils;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class RacingServiceImpl implements RacingService {
@@ -83,9 +85,10 @@ public class RacingServiceImpl implements RacingService {
     }
 
     @Override
+    @Transactional
     public String createNewDriver(String alias) {
-        var auth = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || auth.getToken() == null) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof JwtAuthenticationToken auth) || !auth.isAuthenticated() || auth.getToken() == null) {
             throw new InvalidTokenException("Invalid or empty token");
         }
         var username = auth.getToken().getClaimAsString("username");
