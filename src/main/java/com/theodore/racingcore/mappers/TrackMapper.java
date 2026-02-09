@@ -21,6 +21,8 @@ public interface TrackMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
+    @Mapping(target = "dateCreated",  ignore = true)
+    @Mapping(target = "dateUpdated",  ignore = true)
     void updateEntity(@MappingTarget Track track, CreateNewTrackRequestDto dto);
 
 }
