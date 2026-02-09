@@ -37,13 +37,30 @@ public class ProjectSecurityConfig {
                         )
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml"
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/cars/by-id/**").permitAll()
-                        .anyRequest().permitAll()
+                                .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/v3/api-docs.yaml"
+                                ).permitAll()
+                                .requestMatchers(HttpMethod.GET,
+                                        "/cars/by-id/**",
+                                        "/cars/model/by-id/**"
+                                )
+                                .permitAll()
+                                .requestMatchers(HttpMethod.GET,
+                                        "/drivetrain/by-id/**",
+                                        "/drivetrain/engine/by-id/**"
+                                ).permitAll()
+                                .requestMatchers(
+                                        "/manufacturers/by-id/**",
+                                        "/manufacturers/search"
+                                ).permitAll()
+                                .requestMatchers(HttpMethod.GET,
+                                        "/racing/track/by-id/**",
+                                        "/racing/driver/by-id/**"
+                                ).permitAll()
+
+                                .anyRequest().permitAll()
                         //.anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
