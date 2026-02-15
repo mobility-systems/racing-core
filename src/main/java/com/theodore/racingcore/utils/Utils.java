@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Utils {
 
+    private Utils() {
+    }
+
     public static String toEtag(Long version) {
         return "\"" + version + "\"";
     }

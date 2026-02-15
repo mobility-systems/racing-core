@@ -1,5 +1,7 @@
 package com.theodore.racingcore.services;
 
+import com.theodore.infrastructure.common.exceptions.NotFoundException;
+import com.theodore.infrastructure.common.exceptions.ReferenceMismatchException;
 import com.theodore.racingcore.entities.cars.CarModel;
 import com.theodore.racingcore.entities.cars.CarSpecification;
 import com.theodore.racingcore.exceptions.InvalidETagException;
@@ -11,8 +13,11 @@ import com.theodore.racingcore.models.automobiles.cars.responses.CarResponseDto;
 import com.theodore.racingcore.repositories.CarModelRepository;
 import com.theodore.racingcore.repositories.CarSpecificationRepository;
 import com.theodore.racingcore.repositories.TechnicalDetailsRepository;
+import com.theodore.racingcore.utils.CacheNames;
 import com.theodore.racingcore.utils.Utils;
-import com.theodore.infrastructure.common.exceptions.NotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,6 +53,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @CachePut(cacheNames = CacheNames.CAR_MODEL_BY_ID, key = "#id")
     public CarModelResponseDto updateCarModel(Long id, CarModelRequestDto request, String ifMatch) {
         var carModel = getCarModelById(id);
 
@@ -65,7 +71,25 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @CacheEvict(cacheNames = CacheNames.CAR_MODEL_BY_ID, key = "#id")
+    public void deleteCarModel(Long id, String ifMatch) {
+        if (carSpecificationRepository.existsByCar_Id(id)) {
+            throw new ReferenceMismatchException("Cannot delete car model because it is used");
+        }
+
+        var carModel = getCarModelById(id);
+
+        if (carModel.getVersion() != Utils.parseIfMatch(ifMatch)) {
+            throw new InvalidETagException();
+        }
+
+        carModelRepository.delete(carModel);
+    }
+
+    @Override
+    @Cacheable(cacheNames = CacheNames.CAR_MODEL_BY_ID, key = "#id", unless = "#result == null")
     public CarModelResponseDto findCarModelById(Long id) {
+        //simulateLag();
         var carModel = getCarModelById(id);
         return carModelMapper.toResponse(carModel);
     }
@@ -80,6 +104,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @CachePut(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id")
     public CarResponseDto updateCar(Long id, UpdateCarRequest updateRequest, String ifMatch) {
 
         var carSpecification = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
@@ -96,6 +121,19 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @CacheEvict(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id")
+    public void deleteCar(Long id, String ifMatch) {
+        var car = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
+
+        if (car.getVersion() != Utils.parseIfMatch(ifMatch)) {
+            throw new InvalidETagException();
+        }
+
+        carSpecificationRepository.delete(car);
+    }
+
+    @Override
+    @Cacheable(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id", unless = "#result == null")
     public CarResponseDto getCarById(Long id) {
         var carSpecification = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
         var carModelResponse = carModelMapper.toResponse(carSpecification.getCar());
@@ -197,5 +235,14 @@ public class CarServiceImpl implements CarService {
     private CarModel getCarModelById(Long id) {
         return carModelRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Car Model not found"));
+    }
+
+    //testing slow service
+    private void simulateLag() {
+        try {
+            Thread.sleep(1100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

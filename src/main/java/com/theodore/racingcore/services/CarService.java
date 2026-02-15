@@ -22,6 +22,14 @@ public interface CarService {
      */
     CarModelResponseDto updateCarModel(Long id, CarModelRequestDto request, String ifMatch);
 
+    /**
+     * Deletes a car model
+     *
+     * @param id      The id of the car model that will be deleted
+     * @param ifMatch This is used to prevent different simultaneous requests affecting the same entry
+     */
+    void deleteCarModel(Long id, String ifMatch);
+
     CarModelResponseDto findCarModelById(Long id);
 
     /**
@@ -37,6 +45,14 @@ public interface CarService {
      * @param ifMatch This is used to prevent different simultaneous requests updating the same entry
      */
     CarResponseDto updateCar(Long id, UpdateCarRequest request, String ifMatch);
+
+    /**
+     * Deletes a car
+     *
+     * @param id      The id of the car that will be deleted
+     * @param ifMatch This is used to prevent different simultaneous requests affecting the same entry
+     */
+    void deleteCar(Long id, String ifMatch);
 
     CarResponseDto getCarById(Long id);
 }

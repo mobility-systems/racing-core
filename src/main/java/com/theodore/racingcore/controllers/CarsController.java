@@ -36,12 +36,20 @@ public class CarsController {
     @PutMapping("/model/update/{id}")
     @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<CarModelResponseDto> updateCarModel(@PathVariable Long id,
-                                               @RequestBody @Valid CarModelRequestDto request,
-                                               @RequestHeader(value = "If-Match") String ifMatch) {
+                                                              @RequestBody @Valid CarModelRequestDto request,
+                                                              @RequestHeader(value = "If-Match") String ifMatch) {
         var response = carService.updateCarModel(id, request, ifMatch);
         return ResponseEntity.ok()
                 .eTag(Utils.toEtag(response.version()))
                 .body(response);
+    }
+
+    @DeleteMapping("/model/{id}")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
+    public ResponseEntity<Void> deleteCarModel(@PathVariable Long id,
+                                               @RequestHeader(value = "If-Match", required = false) String ifMatch) {
+        carService.deleteCarModel(id, ifMatch);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/model/by-id/{id}")
@@ -60,12 +68,20 @@ public class CarsController {
     @PutMapping("/update/{id}")
     @PreAuthorize("hasRole('SYS_ADMIN')")
     public ResponseEntity<CarResponseDto> updateCar(@PathVariable Long id,
-                                          @RequestBody @Valid UpdateCarRequest request,
-                                          @RequestHeader(value = "If-Match") String ifMatch) {
+                                                    @RequestBody @Valid UpdateCarRequest request,
+                                                    @RequestHeader(value = "If-Match") String ifMatch) {
         var response = carService.updateCar(id, request, ifMatch);
         return ResponseEntity.ok()
                 .eTag(Utils.toEtag(response.version()))
                 .body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SYS_ADMIN')")
+    public ResponseEntity<Void> deleteCar(@PathVariable Long id,
+                                          @RequestHeader(value = "If-Match", required = false) String ifMatch) {
+        carService.deleteCar(id, ifMatch);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/by-id/{id}")

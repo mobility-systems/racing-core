@@ -9,19 +9,23 @@ import com.theodore.racingcore.entities.racing.Track;
 import com.theodore.racingcore.exceptions.InvalidETagException;
 import com.theodore.racingcore.mappers.DriverMapper;
 import com.theodore.racingcore.mappers.TrackMapper;
+import com.theodore.racingcore.models.racing.requests.CreateNewLapRequestDto;
 import com.theodore.racingcore.models.racing.requests.CreateNewTrackRequestDto;
 import com.theodore.racingcore.models.racing.respones.DriverResponseDto;
+import com.theodore.racingcore.models.racing.respones.LapPreviewResponseDto;
 import com.theodore.racingcore.models.racing.respones.TrackResponseDto;
 import com.theodore.racingcore.repositories.DriverRepository;
 import com.theodore.racingcore.repositories.TrackRepository;
 import com.theodore.racingcore.services.clients.AccountManagementRestClient;
 import com.theodore.racingcore.services.clients.AuthServerGrpcClient;
 import com.theodore.racingcore.utils.Utils;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class RacingServiceImpl implements RacingService {
@@ -81,9 +85,10 @@ public class RacingServiceImpl implements RacingService {
     }
 
     @Override
+    @Transactional
     public String createNewDriver(String alias) {
-        var auth = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || auth.getToken() == null) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof JwtAuthenticationToken auth) || !auth.isAuthenticated() || auth.getToken() == null) {
             throw new InvalidTokenException("Invalid or empty token");
         }
         var username = auth.getToken().getClaimAsString("username");
@@ -109,6 +114,11 @@ public class RacingServiceImpl implements RacingService {
     public DriverResponseDto getDriver(String id) {
         var driver = driverRepository.findById(id).orElseThrow(() -> new NotFoundException("Driver not found"));
         return driverMapper.toResponse(driver);
+    }
+
+    @Override
+    public LapPreviewResponseDto createNewLap(CreateNewLapRequestDto request) {
+        return null;//todo
     }
 
     private Track getTrackById(Long id) {
