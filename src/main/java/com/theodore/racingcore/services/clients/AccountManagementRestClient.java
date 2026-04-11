@@ -14,9 +14,9 @@ public class AccountManagementRestClient {
         this.client = client;
     }
 
-    public String fetchUserId(String username) {
+    public String fetchUserEmail(String userId) {
         return client.get()
-                .uri("/misc/driver-id/{username}", username)
+                .uri("/misc/driver-email/{userId}", userId)
                 .attributes(clientRegistrationId("mobility-api"))
                 .retrieve()
                 .body(String.class);

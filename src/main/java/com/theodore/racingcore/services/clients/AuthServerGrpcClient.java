@@ -1,6 +1,6 @@
 package com.theodore.racingcore.services.clients;
 
-import com.theodore.infrastructure.common.entities.modeltypes.RoleType;
+import com.theodore.infrastructure.common.entities.enums.RoleType;
 import com.theodore.user.AddRoleRequest;
 import com.theodore.user.AuthServerRoleManagementGrpc;
 import net.devh.boot.grpc.client.inject.GrpcClient;

@@ -30,20 +30,21 @@ public class GrpcClientAuthInterceptor implements ClientInterceptor {
         return new ForwardingClientCall.SimpleForwardingClientCall<>(next.newCall(method, callOptions)) {
             @Override
             public void start(Listener<RespT> responseListener, Metadata headers) {
-                String token = getAccessToken();
-                headers.put(Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer " + token);
+                headers.put(
+                        Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER),
+                        "Bearer " + getAccessToken());
                 super.start(responseListener, headers);
             }
         };
     }
 
     private String getAccessToken() {
-        OAuth2AuthorizeRequest authRequest = OAuth2AuthorizeRequest
-                .withClientRegistrationId("mobility-api")
-                .principal("internal-client")
+        OAuth2AuthorizeRequest authRequest = OAuth2AuthorizeRequest.withClientRegistrationId("auth-server-grpc")
+                .principal("auth-server-grpc")
                 .build();
 
         OAuth2AuthorizedClient client = authorizedClientManager.authorize(authRequest);
+
         if (client == null || client.getAccessToken() == null) {
             throw new IllegalStateException("Could not obtain access token");
         }

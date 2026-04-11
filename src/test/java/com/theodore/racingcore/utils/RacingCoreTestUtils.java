@@ -27,10 +27,10 @@ public class RacingCoreTestUtils {
         SecurityContextHolder.setContext(context);
     }
 
-    public static JwtAuthenticationToken jwtAuthWithUsername(String username) {
+    public static JwtAuthenticationToken jwtAuthWithSubject(String userId) {
         Jwt jwt = Jwt.withTokenValue("token")
                 .header("alg", "none")
-                .claim("username", username)
+                .subject(userId)
                 .build();
 
         return new JwtAuthenticationToken(jwt, List.of());

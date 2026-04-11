@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
 
@@ -39,8 +40,15 @@ public class RestClientConfig {
     }
 
     @Bean
-    RestClient accountManagementRestClientConfig(RestClient.Builder builder, OAuth2AuthorizedClientManager authorizedClientManager) {
-        OAuth2ClientHttpRequestInterceptor interceptor = new OAuth2ClientHttpRequestInterceptor(authorizedClientManager);
+    RestClient accountManagementRestClientConfig(RestClient.Builder builder,
+                                                 OAuth2AuthorizedClientManager authorizedClientManager,
+                                                 OAuth2AuthorizedClientService clientService) {
+
+        var interceptor = new OAuth2ClientHttpRequestInterceptor(authorizedClientManager);
+        interceptor.setClientRegistrationIdResolver(request -> "account-management");
+        interceptor.setAuthorizationFailureHandler(
+                OAuth2ClientHttpRequestInterceptor.authorizationFailureHandler(clientService));
+
         return builder.baseUrl(accountManagementUrl).requestInterceptor(interceptor).build();
     }
 

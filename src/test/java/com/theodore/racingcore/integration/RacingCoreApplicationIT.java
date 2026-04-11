@@ -1,11 +1,11 @@
 package com.theodore.racingcore.integration;
 
+import com.theodore.queue.common.services.MessagingService;
 import com.theodore.racingcore.models.racing.requests.CreateNewDriverRequestDto;
 import com.theodore.racingcore.repositories.DriverRepository;
 import com.theodore.racingcore.services.clients.AccountManagementRestClient;
 import com.theodore.racingcore.services.clients.AuthServerGrpcClient;
 import com.theodore.racingcore.utils.RacingCoreTestConfigs;
-import com.theodore.racingcore.utils.RacingCoreTestUtils;
 import com.theodore.racingcore.utils.TestData;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,8 @@ class RacingCoreApplicationIT extends BasePostgresTest {
     AccountManagementRestClient accountManagementRestClient;
     @MockitoBean
     AuthServerGrpcClient authServerGrpcClient;
+    @MockitoBean
+    MessagingService messagingService;
 
     @MockitoSpyBean
     DriverRepository driverRepository;
@@ -55,6 +57,7 @@ class RacingCoreApplicationIT extends BasePostgresTest {
     @Nested
     class CreateNewDriverTests {
 
+        private static final String USER_EMAIL = TestData.ACTIVE_USER;
         private static CreateNewDriverRequestDto EMPTY_ALIAS = new CreateNewDriverRequestDto("");
         private static CreateNewDriverRequestDto EXISTING_ALIAS = new CreateNewDriverRequestDto(TestData.EXISTING_ALIAS_1);
         private static CreateNewDriverRequestDto ALIAS = new CreateNewDriverRequestDto("driver1");
@@ -94,7 +97,7 @@ class RacingCoreApplicationIT extends BasePostgresTest {
             //given
             long countBefore = driverRepository.count();
 
-            when(accountManagementRestClient.fetchUserId(any(String.class))).thenReturn(RacingCoreTestUtils.generateUlId());
+            when(accountManagementRestClient.fetchUserEmail(any(String.class))).thenReturn(USER_EMAIL);
 
             // when
             client.post()
@@ -106,7 +109,7 @@ class RacingCoreApplicationIT extends BasePostgresTest {
                     .expectStatus().isEqualTo(HttpStatus.CONFLICT);
 
             // then
-            verify(accountManagementRestClient, times(1)).fetchUserId(TestData.ACTIVE_USER);
+            verify(accountManagementRestClient, never()).fetchUserEmail(any(String.class));
             verifyNoInteractions(authServerGrpcClient);
 
             long countAfter = driverRepository.count();
@@ -119,7 +122,7 @@ class RacingCoreApplicationIT extends BasePostgresTest {
             //given
             long countBefore = driverRepository.count();
 
-            when(accountManagementRestClient.fetchUserId(any(String.class))).thenReturn(RacingCoreTestUtils.generateUlId());
+            when(accountManagementRestClient.fetchUserEmail(any(String.class))).thenReturn(USER_EMAIL);
 
             // when
             client.post()
@@ -131,7 +134,7 @@ class RacingCoreApplicationIT extends BasePostgresTest {
                     .expectStatus().isEqualTo(HttpStatus.CREATED);
 
             // then
-            verify(accountManagementRestClient, times(1)).fetchUserId(TestData.ACTIVE_USER);
+            verify(accountManagementRestClient, times(1)).fetchUserEmail(any(String.class));
             verify(authServerGrpcClient, times(1)).addUserRoleInAuthServer(any(), any());
 
             long countAfter = driverRepository.count();

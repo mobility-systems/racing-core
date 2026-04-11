@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +30,12 @@ public class RacingCoreTestConfigs {
             Map<String, Object> headers = Map.of("alg", "none");
 
             Map<String, Object> claims = Map.of(
-                    "sub", TestData.ACTIVE_USER,
+                    "sub", RacingCoreTestUtils.generateUlId(),
                     "aud", List.of("app-public"),
                     "scope", List.of("openid", "email"),
                     "roles", List.of("SIMPLE_USER"),
                     "iss", "http://localhost:9000/auth-server",
                     "jti", "fafc9d66-b823-44ef-9079-5abd99522ab1",
-                    "username", TestData.ACTIVE_USER,
                     "iat", now.getEpochSecond(),
                     "nbf", now.minusSeconds(5).getEpochSecond(),
                     "exp", now.plusSeconds(3600).getEpochSecond()
