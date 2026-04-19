@@ -2,7 +2,7 @@ package com.theodore.racingcore.models.automobiles.manufacturers.responses;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.theodore.racingcore.models.automobiles.cars.responses.ManufacturerCarModelResponseDto;
-import com.theodore.infrastructure.common.enums.Country;
+import com.theodore.infrastructure.common.entities.enums.Country;
 
 import java.util.Set;
 

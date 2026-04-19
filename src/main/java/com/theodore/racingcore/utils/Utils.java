@@ -1,6 +1,9 @@
 package com.theodore.racingcore.utils;
 
+import com.theodore.infrastructure.common.exceptions.InvalidTokenException;
 import com.theodore.racingcore.exceptions.InvalidETagException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,6 +26,14 @@ public class Utils {
         } catch (NumberFormatException ex) {
             throw new InvalidETagException();
         }
+    }
+
+    public static String getLoggedInUserId() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof JwtAuthenticationToken auth) || !auth.isAuthenticated() || auth.getToken() == null) {
+            throw new InvalidTokenException("Invalid or empty token");
+        }
+        return auth.getToken().getClaimAsString("sub");
     }
 
 }

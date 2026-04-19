@@ -1,6 +1,6 @@
 package com.theodore.racingcore.models.racing.requests;
 
-import com.theodore.infrastructure.common.enums.Country;
+import com.theodore.infrastructure.common.entities.enums.Country;
 
 public record CreateNewTrackRequestDto(String trackName,
                                        Country country,

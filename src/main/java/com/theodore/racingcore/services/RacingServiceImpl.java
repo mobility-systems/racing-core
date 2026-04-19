@@ -1,9 +1,11 @@
 package com.theodore.racingcore.services;
 
-import com.theodore.infrastructure.common.entities.modeltypes.RoleType;
+import com.theodore.infrastructure.common.entities.enums.RoleType;
 import com.theodore.infrastructure.common.exceptions.AlreadyExistsException;
-import com.theodore.infrastructure.common.exceptions.InvalidTokenException;
 import com.theodore.infrastructure.common.exceptions.NotFoundException;
+import com.theodore.infrastructure.common.saga.SagaOrchestrator;
+import com.theodore.queue.common.emails.EmailDto;
+import com.theodore.queue.common.services.MessagingService;
 import com.theodore.racingcore.entities.racing.Driver;
 import com.theodore.racingcore.entities.racing.Track;
 import com.theodore.racingcore.exceptions.InvalidETagException;
@@ -18,17 +20,21 @@ import com.theodore.racingcore.repositories.DriverRepository;
 import com.theodore.racingcore.repositories.TrackRepository;
 import com.theodore.racingcore.services.clients.AccountManagementRestClient;
 import com.theodore.racingcore.services.clients.AuthServerGrpcClient;
+import com.theodore.racingcore.services.saga.SagaCompensationActionService;
 import com.theodore.racingcore.utils.Utils;
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class RacingServiceImpl implements RacingService {
+
+    private static final String SEND_AUTH_USER_ACCOUNT_CHANGES_STEP = "send-auth-user-account-changes";
+    private static final String SAVE_DRIVER_STEP = "save-driver";
+    private static final String SEND_EMAIL_STEP = "send-to-email-service";
 
     private final TrackRepository trackRepository;
     private final TrackMapper trackMapper;
@@ -36,19 +42,25 @@ public class RacingServiceImpl implements RacingService {
     private final DriverRepository driverRepository;
     private final DriverMapper driverMapper;
     private final AuthServerGrpcClient authServerGrpcClient;
+    private final MessagingService messagingService;
+    private final SagaCompensationActionService sagaCompensationActionService;
 
     public RacingServiceImpl(TrackRepository trackRepository,
                              TrackMapper trackMapper,
                              AccountManagementRestClient accountManagementRestClient,
                              DriverRepository driverRepository,
                              DriverMapper driverMapper,
-                             AuthServerGrpcClient authServerGrpcClient) {
+                             AuthServerGrpcClient authServerGrpcClient,
+                             MessagingService messagingService,
+                             SagaCompensationActionService sagaCompensationActionService) {
         this.trackRepository = trackRepository;
         this.trackMapper = trackMapper;
         this.accountManagementRestClient = accountManagementRestClient;
         this.driverRepository = driverRepository;
         this.driverMapper = driverMapper;
         this.authServerGrpcClient = authServerGrpcClient;
+        this.messagingService = messagingService;
+        this.sagaCompensationActionService = sagaCompensationActionService;
     }
 
     @Override
@@ -87,13 +99,8 @@ public class RacingServiceImpl implements RacingService {
     @Override
     @Transactional
     public String createNewDriver(String alias) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof JwtAuthenticationToken auth) || !auth.isAuthenticated() || auth.getToken() == null) {
-            throw new InvalidTokenException("Invalid or empty token");
-        }
-        var username = auth.getToken().getClaimAsString("username");
 
-        var userId = accountManagementRestClient.fetchUserId(username);
+        var userId = Utils.getLoggedInUserId();
 
         if (driverRepository.existsByIdOrAliasIgnoreCase(userId, alias)) {
             throw new AlreadyExistsException("Driver with alias %s already exists".formatted(alias));
@@ -103,11 +110,34 @@ public class RacingServiceImpl implements RacingService {
         driver.setId(userId);
         driver.setAlias(alias);
 
-        driverRepository.save(driver);
+        var sagaOrchestrator = new SagaOrchestrator();
 
-        authServerGrpcClient.addUserRoleInAuthServer(userId, RoleType.DRIVER);
+        sagaOrchestrator
+                .step(SAVE_DRIVER_STEP,
+                        () -> driverRepository.save(driver),
+                        () -> driverRepository.delete(driver)
+                )
+                .step(SEND_AUTH_USER_ACCOUNT_CHANGES_STEP,
+                        () -> authServerGrpcClient.addUserRoleInAuthServer(userId, RoleType.DRIVER),
+                        () -> {
+                            String logMsg = "New Driver Registration";
+                            sagaCompensationActionService.authServerRolesRollback(userId, Set.of(RoleType.DRIVER), logMsg);
+                        }
+                )
+                .step(SEND_EMAIL_STEP,
+                        () -> sendEmailToNewDriver(userId),
+                        () -> {
+                        }
+                );
+
+        sagaOrchestrator.run();
 
         return userId;
+    }
+
+    private void sendEmailToNewDriver(String userId) {
+        var userEmail = accountManagementRestClient.fetchUserEmail(userId);
+        messagingService.sendToEmailService(new EmailDto(List.of(userEmail), "Successful driver sign up", "Congratulations on becoming a driver for our platform!!"));
     }
 
     @Override

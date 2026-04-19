@@ -1,5 +1,7 @@
 package com.theodore.racingcore.configs.security;
 
+import com.theodore.infrastructure.common.models.OAuth2ResourceProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -8,16 +10,26 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.client.*;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.ClientCredentialsOAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.endpoint.RestClientClientCredentialsTokenResponseClient;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import java.time.Duration;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@EnableConfigurationProperties(OAuth2ResourceProperties.class)
 public class ProjectSecurityConfig {
 
     @Bean
@@ -81,16 +93,34 @@ public class ProjectSecurityConfig {
         return jac;
     }
 
+    private static final Map<String, String> REGISTRATION_RESOURCES = Map.of(
+            "account-management", "urn:mobility:account-management",
+            "auth-server-grpc", "urn:mobility:auth-server"
+    );
+
     @Bean
-    public OAuth2AuthorizedClientManager authorizedClientManager(ClientRegistrationRepository clientRegistrations,
-                                                                 OAuth2AuthorizedClientService clientService) {
+    OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrations,
+            OAuth2AuthorizedClientService clientService,
+            OAuth2ResourceProperties resourceProperties) {
 
-        OAuth2AuthorizedClientProvider provider = OAuth2AuthorizedClientProviderBuilder.builder()
-                .clientCredentials()
-                .build();
+        var tokenClient = new RestClientClientCredentialsTokenResponseClient();
+        tokenClient.addParametersConverter(grantRequest -> {
+            String resource = REGISTRATION_RESOURCES.get(
+                    grantRequest.getClientRegistration().getRegistrationId());
+            if (resource == null) {
+                return new LinkedMultiValueMap<>();
+            }
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("resource", resource);
+            return params;
+        });
 
-        AuthorizedClientServiceOAuth2AuthorizedClientManager manager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
-                clientRegistrations, clientService);
+        var provider = new ClientCredentialsOAuth2AuthorizedClientProvider();
+        provider.setAccessTokenResponseClient(tokenClient);
+        provider.setClockSkew(Duration.ofSeconds(30));
+
+        var manager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(clientRegistrations, clientService);
 
         manager.setAuthorizedClientProvider(provider);
         return manager;
