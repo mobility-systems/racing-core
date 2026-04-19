@@ -10,8 +10,8 @@ public class AccountManagementRestClient {
 
     private final RestClient client;
 
-    public AccountManagementRestClient(RestClient client) {
-        this.client = client;
+    public AccountManagementRestClient(RestClient accountManagementRestClientBean) {
+        this.client = accountManagementRestClientBean;
     }
 
     public String fetchUserEmail(String userId) {

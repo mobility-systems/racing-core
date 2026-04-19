@@ -16,7 +16,7 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class RestClientConfig {
 
-    @Value("${account.management.url}")
+    @Value("${account.management.service.url}")
     private String accountManagementUrl;
 
     /**
@@ -39,7 +39,7 @@ public class RestClientConfig {
                 .info(new Info().title("Racing Core api").version("v1"));
     }
 
-    @Bean
+    @Bean("accountManagementRestClientBean")
     RestClient accountManagementRestClientConfig(RestClient.Builder builder,
                                                  OAuth2AuthorizedClientManager authorizedClientManager,
                                                  OAuth2AuthorizedClientService clientService) {
