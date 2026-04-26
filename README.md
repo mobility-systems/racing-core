@@ -67,13 +67,15 @@ for outbound requests.
 **Auth Server** - Racing Core acts as an OAuth 2.1 Resource Server.
 Every incoming request must carry a valid JWT Bearer token issued by the Auth Server.
 Token validation is handled automatically by Spring Security.
-Racing Core also communicates with the Auth Server over gRPC (using the client credentials flow)
-to obtain access tokens for outbound service-to-service calls.
+Racing Core communicates with the Auth Server over gRPC (using the client credentials flow)
+to obtain access tokens for outbound service-to-service calls. 
+It also communicates with the Auth server via RabbitMQ to roll back adding the role 
+`DRIVER` if something went wrong in the process of a user opting to become a `DRIVER`.
 All outgoing gRPC calls are intercepted by `GrpcClientAuthInterceptor`,
 which automatically fetches and attaches the token to the request metadata.
 
 **Account Management Service** - Called over REST to resolve user identity data,
-for example to fetch a user ID from an email address when assigning the driver role.
+for example to fetch a user's email from a user ID when assigning the driver role.
 
 ---
 
@@ -225,11 +227,10 @@ activated either through Maven profile flags or by setting `spring.profiles.acti
 Activate a profile at build or run time:
 
 ```bash
-# build
 mvn spring-boot:run -Plocal
-
-# run
-java -jar target/racing-core.jar --spring.profiles.active=staging
+#or
+mvn clean package -DskipTests
+java -jar target/racing-core-1.0.0.jar --spring.profiles.active=staging
 ```
 
 ---
@@ -238,27 +239,10 @@ java -jar target/racing-core.jar --spring.profiles.active=staging
 
 - **Java 21+**
 - **Maven 3.9+**
+- **RabbitMQ**
 - **Docker**
 - **PostgreSQL**
 - **Redis**
-
----
-
-## Running the Service
-
-```bash
-# build
-mvn clean package -DskipTests
-
-# run
-java -jar target/racing-core.jar
-```
-
-Or with Maven directly:
-
-```bash
-mvn spring-boot:run -Plocal
-```
 
 ---
 
@@ -302,23 +286,41 @@ This service depends on two internal libraries hosted on GitHub Packages:
 |-------------------------|---------------------------------------------------------|
 | `infrastructure-common` | Shared infrastructure utilities and base configurations |
 | `proto-common`          | Protobuf / gRPC service definitions                     |
+| `rabbitmq-common`       | RabbitMQ connection management and event abstractions   |
 
 These must be available in the local Maven repository or a private artifact
 registry before building.
 
 ---
 
-## Docker
+### Running the Service
 
-Start the required infrastructure services with Docker Compose:
+### Full Stack
+
+`All four microservices, databases, and infrastructure are managed from the
+[mobility-app](https://github.com/mobility-systems/mobility-app) repository:
 
 ```bash
+git clone https://github.com/mobility-systems/mobility-app.git
+cd mobility-app
 docker compose up -d
 ```
 
-> **Current state:** The provided `docker-compose.yml` starts only the PostgreSQL database.
-> Redis and full service containerization are in progress.
+### Standalone development
 
 > [!WARNING]
-> **Make sure all required infrastructure services (PostgreSQL, Redis) are
-> available and healthy before starting the application.**
+> **Make sure all required infrastructure services (PostgreSQL, Redis, RabbitMQ)
+> are available before starting.**
+
+```bash
+#build
+mvn clean package -Plocal -DskipTests
+#run
+java -jar target/racing-core-1.0.0.jar
+```
+
+Or with Maven directly:
+
+```bash
+mvn spring-boot:run
+```
