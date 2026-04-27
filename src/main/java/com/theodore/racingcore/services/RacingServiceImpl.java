@@ -97,7 +97,6 @@ public class RacingServiceImpl implements RacingService {
     }
 
     @Override
-    @Transactional
     public String createNewDriver(String alias) {
 
         var userId = Utils.getLoggedInUserId();
