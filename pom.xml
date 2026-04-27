@@ -51,6 +51,27 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.theodore.common</groupId>
+                <artifactId>infrastructure-common</artifactId>
+                <version>${mobility-common.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.theodore.common</groupId>
+                <artifactId>proto-common</artifactId>
+                <version>${mobility-common.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.theodore.common</groupId>
+                <artifactId>rabbitmq-common</artifactId>
+                <version>${mobility-common.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -114,12 +135,14 @@
         <dependency>
             <groupId>com.theodore.common</groupId>
             <artifactId>proto-common</artifactId>
-            <version>${mobility-common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.theodore.common</groupId>
             <artifactId>rabbitmq-common</artifactId>
-            <version>${mobility-common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.theodore.common</groupId>
+            <artifactId>infrastructure-common</artifactId>
         </dependency>
 
         <!--  SWAGGER   -->
