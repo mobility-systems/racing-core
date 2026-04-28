@@ -22,7 +22,6 @@ import com.theodore.racingcore.services.clients.AccountManagementRestClient;
 import com.theodore.racingcore.services.clients.AuthServerGrpcClient;
 import com.theodore.racingcore.services.saga.SagaCompensationActionService;
 import com.theodore.racingcore.utils.Utils;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

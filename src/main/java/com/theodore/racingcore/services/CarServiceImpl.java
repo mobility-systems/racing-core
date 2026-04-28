@@ -15,6 +15,7 @@ import com.theodore.racingcore.repositories.CarSpecificationRepository;
 import com.theodore.racingcore.repositories.TechnicalDetailsRepository;
 import com.theodore.racingcore.utils.CacheNames;
 import com.theodore.racingcore.utils.Utils;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CarServiceImpl implements CarService {
+
+    private static final String CAR_NOT_FOUND= "Car not found";
 
     private final CarSpecificationRepository carSpecificationRepository;
     private final ManufacturerService manufacturerService;
@@ -89,7 +92,6 @@ public class CarServiceImpl implements CarService {
     @Override
     @Cacheable(cacheNames = CacheNames.CAR_MODEL_BY_ID, key = "#id", unless = "#result == null")
     public CarModelResponseDto findCarModelById(Long id) {
-        //simulateLag();
         var carModel = getCarModelById(id);
         return carModelMapper.toResponse(carModel);
     }
@@ -107,7 +109,7 @@ public class CarServiceImpl implements CarService {
     @CachePut(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id")
     public CarResponseDto updateCar(Long id, UpdateCarRequest updateRequest, String ifMatch) {
 
-        var carSpecification = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
+        var carSpecification = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException(CAR_NOT_FOUND));
 
         if (carSpecification.getVersion() != Utils.parseIfMatch(ifMatch)) {
             throw new InvalidETagException();
@@ -123,7 +125,7 @@ public class CarServiceImpl implements CarService {
     @Override
     @CacheEvict(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id")
     public void deleteCar(Long id, String ifMatch) {
-        var car = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
+        var car = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException(CAR_NOT_FOUND));
 
         if (car.getVersion() != Utils.parseIfMatch(ifMatch)) {
             throw new InvalidETagException();
@@ -135,7 +137,7 @@ public class CarServiceImpl implements CarService {
     @Override
     @Cacheable(cacheNames = CacheNames.ALL_CAR_INFO_BY_ID, key = "#id", unless = "#result == null")
     public CarResponseDto getCarById(Long id) {
-        var carSpecification = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException("Car not found"));
+        var carSpecification = carSpecificationRepository.findById(id).orElseThrow(() -> new NotFoundException(CAR_NOT_FOUND));
         var carModelResponse = carModelMapper.toResponse(carSpecification.getCar());
         var drivetrainResponse = drivetrainService.getDrivetrainResponseDto(carSpecification.getDrivetrain());
         var technicalDetailsResponse = technicalDetailsMapper.toResponse(carSpecification.getTechnicalDetails());
@@ -237,12 +239,4 @@ public class CarServiceImpl implements CarService {
                 .orElseThrow(() -> new NotFoundException("Car Model not found"));
     }
 
-    //testing slow service
-    private void simulateLag() {
-        try {
-            Thread.sleep(1100);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
 }
