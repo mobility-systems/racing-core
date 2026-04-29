@@ -45,10 +45,6 @@ class RacingCoreApplicationIT extends BasePostgresTest {
         reset(accountManagementRestClient, driverRepository, authServerGrpcClient);
     }
 
-    @Test
-    void contextLoads() {
-    }
-
     @BeforeEach
     void feedUserProfile() {
         testDataFeeder.feedDriverTable();
@@ -58,9 +54,9 @@ class RacingCoreApplicationIT extends BasePostgresTest {
     class CreateNewDriverTests {
 
         private static final String USER_EMAIL = TestData.ACTIVE_USER;
-        private static CreateNewDriverRequestDto EMPTY_ALIAS = new CreateNewDriverRequestDto("");
-        private static CreateNewDriverRequestDto EXISTING_ALIAS = new CreateNewDriverRequestDto(TestData.EXISTING_ALIAS_1);
-        private static CreateNewDriverRequestDto ALIAS = new CreateNewDriverRequestDto("driver1");
+        private static final CreateNewDriverRequestDto EMPTY_ALIAS = new CreateNewDriverRequestDto("");
+        private static final CreateNewDriverRequestDto EXISTING_ALIAS = new CreateNewDriverRequestDto(TestData.EXISTING_ALIAS_1);
+        private static final CreateNewDriverRequestDto ALIAS = new CreateNewDriverRequestDto("driver1");
 
 
         @AfterEach
