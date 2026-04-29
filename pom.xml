@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.theodore.racing-core</groupId>
     <artifactId>racing-core</artifactId>
-    <version>0.0.2</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>racing-core</name>
     <description>Demo car project for Spring Boot</description>
@@ -39,7 +39,7 @@
         <!--    SWAGGER VERSION    -->
         <springdoc.version>2.8.15</springdoc.version>
         <!--   Theodore versions     -->
-        <mobility-common.version>0.0.7</mobility-common.version>
+        <mobility-common.version>1.0.2</mobility-common.version>
     </properties>
 
     <dependencyManagement>
@@ -306,7 +306,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages - mobilitycommon</name>
-            <url>https://maven.pkg.github.com/theodoreromeos/mobility-common</url>
+            <url>https://maven.pkg.github.com/mobility-systems/mobility-common</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
